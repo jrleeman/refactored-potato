@@ -14,20 +14,31 @@ rss_feeds = {'bbc':'http://feeds.bbci.co.uk/news/rss.xml',
              'fox':'http://feeds.foxnews.com/foxnews/latest',
              'onion':'http://www.theonion.com/feeds/rss'}
 
+defaults = {'publication':'bbc',
+            'city':'London,UK'}
+
 @app.route('/')
-def get_news():
-    query = request.args.get('publication')
+def home():
+    publication = request.args.get('publication')
+    if not publication:
+        publication = defaults['publication']
+    articles = get_news(publication)
+
+    city = request.args.get('city')
+    if not city:
+        city = defaults['city']
+    weather = get_weather(city)
+    return render_template('home.html',
+                           articles=articles,
+                           weather=weather)
+
+def get_news(query):
     if not query or query.lower() not in rss_feeds:
-        publication = 'bbc'
+        publication = defaults['publication']
     else:
         publication = query.lower()
-
     feed = feedparser.parse(rss_feeds[publication])
-
-    weather = get_weather('London,UK')
-    return render_template('home.html',
-                           articles=feed['entries'],
-                           weather=weather)
+    return feed['entries']
 
 
 def get_weather(query):
