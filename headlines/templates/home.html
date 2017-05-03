@@ -1,19 +1,72 @@
 <html>
   <head>
     <title>Headlines</title>
+
+    <style>
+    html {
+      font-family: "Helvetica";
+      background: white;
+    }
+
+    body {
+      background: lightgrey;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    #header {
+      background: lightsteelblue;
+      padding-top: 5;
+    }
+
+    #inner-header {
+      padding-left: 10;
+    }
+
+    #main {
+      padding-left: 10;
+    }
+
+    input[type="text"], select {
+      color: grey;
+      border: 1px solid lightsteelblue;
+      height: 30px;
+      line-height: 15px;
+      margin: 2px 6px 16px 0px;
+    }
+
+    input[type="submit"] {
+      padding: 5px 10px 5px 10px;
+      color: black;
+      background: lightsteelblue;
+      border: none;
+      box-shadow: 1px 1px 1px #4C6E91;
+    }
+
+    input[type="submit"]:hover {
+      background: steelblue
+    }
+    </style>
   </head>
   <body>
-    <h1>Headlines App</h1>
+    <div id="header">
+      <div id="inner-header">
+        <h1>Headlines App</h1>
+        <p>Useless tools in one spot</p>
+      </div>
+      <hr/>
+    </div>
 
+    <div id="main">
     <h2>Current Weather</h2>
     <form>
       <input type="text" name="city" placeholder="weather search">
       <input type="submit" value="Submit">
     </form>
       <p>City: <b>{{weather.city}}, {{weather.country}}</b></p>
-      <p>{{weather.description}} | {{weather.temperature}}&#8451</p><br />
-      <p>{{weather.windspeed}} | {{weather.winddeg}}</p><br />
-
+      <p>{{weather.description}} | {{weather.temperature}}&#8451
+      | {{weather.windspeed}} knt | {{weather.winddeg}} deg</p><br />
+    <hr/>
     <h2>Currency Exchange</h2>
     <form>
       from: <select name="currency_from">
@@ -30,7 +83,7 @@
             <input type="submit" value="Submit">
     </form>
     {{currency_from}} = {{currency_to}} {{rate}}
-
+    <hr/>
     <h2>Today's Headlines</h2>
     <form>
       <input type="text" name="publication" placeholder="search" />
@@ -42,5 +95,6 @@
       <p>{{article.summary}}</p><br/>
       <hr/>
     {% endfor %}
+  </div>
   </body>
 </html>
