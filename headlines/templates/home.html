@@ -4,13 +4,35 @@
   </head>
   <body>
     <h1>Headlines App</h1>
+
     <h2>Current Weather</h2>
     <form>
       <input type="text" name="city" placeholder="weather search">
       <input type="submit" value="Submit">
     </form>
-      <p>City: <b>{{weather.city}}</b></p>
-      <p>{{weather.description}} | {{weather.temperature}}&#8451</p>
+      <p>City: <b>{{weather.city}}, {{weather.country}}</b></p>
+      <p>{{weather.description}} | {{weather.temperature}}&#8451</p><br />
+      <p>{{weather.windspeed}} | {{weather.winddeg}}</p><br />
+
+    <h2>Currency Exchange</h2>
+    <form>
+      from: <select name="currency_from">
+              <option value="USD">USD</option>
+              <option value="GBP">GBP</option>
+              <option value="EUR">EUR</option>
+              <option value="ZAR">ZAR</option>
+            </select>
+
+      to: <select name="currency_to">
+              <option value="USD">USD</option>
+              <option value="GBP">GBP</option>
+              <option value="EUR">EUR</option>
+              <option value="ZAR">ZAR</option>
+            </select>
+            <input type="submit" value="Submit">
+    </form>
+    {{currency_from}} = {{currency_to}} {{rate}}
+
     <h2>Today's Headlines</h2>
     <form>
       <input type="text" name="publication" placeholder="search" />
