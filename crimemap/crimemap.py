@@ -1,3 +1,5 @@
+import datetime
+import dateparser
 from dbhelper import DBHelper
 from flask import Flask, render_template, request
 import json
@@ -8,10 +10,12 @@ DB = DBHelper()
 categories = ['mugging', 'break-in']
 
 @app.route('/')
-def home():
+def home(error_message=None):
     crimes = DB.get_all_crimes()
     crimes = json.dumps(crimes)
-    return render_template('home.html', crimes=crimes, categories=categories)
+    return render_template('home.html', crimes=crimes,
+                           categories=categories,
+                           error_message=error_message)
 
 
 @app.route('/add', methods=['POST'])
@@ -37,12 +41,27 @@ def submitcrime():
     category = request.form.get('category')
     if category not in categories:
         return home()
-    date = request.form.get('date')
-    latitude = request.form.get('latitude')
-    longitude = request.form.get('longitude')
+
+    date = format_date(request.form.get('date'))
+    if not date:
+        return home(error_message="Invalid date. Please use yyyy-mm-dd format.")
+
+    try:
+        latitude = float(request.form.get('latitude'))
+        longitude = float(request.form.get('longitude'))
+    except ValueError:
+        return home()
     description = request.form.get('description')
     DB.add_crime(category, date, latitude, longitude, description)
     return home()
+
+
+def format_date(userdate):
+    date = dateparser.parse(userdate)
+    try:
+        return datetime.datetime.strftime(date, "%Y-%m-%d")
+    except TypeError:
+        return None
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
