@@ -3,6 +3,7 @@ import dateparser
 from dbhelper import DBHelper
 from flask import Flask, render_template, request
 import json
+import string
 
 app = Flask(__name__)
 DB = DBHelper()
@@ -51,7 +52,8 @@ def submitcrime():
         longitude = float(request.form.get('longitude'))
     except ValueError:
         return home()
-    description = request.form.get('description')
+
+    description = sanitize_string(request.form.get('description'))
     DB.add_crime(category, date, latitude, longitude, description)
     return home()
 
@@ -62,6 +64,11 @@ def format_date(userdate):
         return datetime.datetime.strftime(date, "%Y-%m-%d")
     except TypeError:
         return None
+
+
+def sanitize_string(userinput):
+    whitelist = string.ascii_letters + string.digits + "!?$.,;:-')_& "
+    return "".join(filter(lambda x: x in whitelist, userinput))
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
