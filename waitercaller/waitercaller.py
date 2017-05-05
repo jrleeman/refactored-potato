@@ -2,12 +2,15 @@ from flask import Flask, render_template, redirect, url_for, request
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 
 import config
+import datetime
 from mockdbhelper import MockDBHelper as DBHelper
 from user import User
 from passwordhelper import PasswordHelper
+from bitlyhelper import BitlyHelper
 
 DB = DBHelper()
 PH = PasswordHelper()
+BH = BitlyHelper()
 
 app = Flask(__name__)
 app.secret_key = 'NTOBiFxcjaehKa9nvgTmv5dslPUay7l4QDauEGIV3pSwpZKhpFGqJzestVyGODNT7BL8mauL38xyzgukYV3cIMix9eO8Jgb3bhvo'
@@ -67,12 +70,18 @@ def load_user(user_id):
         return User(user_id)
 
 
+@app.route('/newrequest/<tid>')
+def new_request(tid):
+    DB.add_request(tid, datetime.datetime.now())
+    return("Your request has been submitted - A waiter will be with you shortly")
+
+
 @app.route('/account/createtable', methods=['POST'])
 @login_required
 def account_createtable():
     tablename = request.form.get("tablenumber")
     tableid = DB.add_table(tablename, current_user.get_id())
-    new_url = config.base_url + 'newrequest/' + tableid
+    new_url = BH.shorten_url(config.base_url + "newrequest/" + tableid)
     DB.update_table(tableid, new_url)
     return redirect(url_for('account'))
 
@@ -94,7 +103,21 @@ def account():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    now = datetime.datetime.now()
+    requests = DB.get_requests(current_user.get_id())
+    for req in requests:
+        deltaseconds = (now-req['time']).seconds
+        req['wait_minutes'] = "{:.01f}".format((deltaseconds/60))
+    return render_template("dashboard.html", requests=requests)
+
+
+@app.route('/dashboard/resolve')
+@login_required
+def dashboard_resolve():
+    request_id = request.args.get('request_id')
+    print("Resolve request for id: ", request_id)
+    DB.delete_request(request_id)
+    return redirect(url_for('dashboard'))
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
