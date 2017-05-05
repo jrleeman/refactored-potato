@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import PasswordField, SubmitField, validators
+from wtforms import PasswordField, SubmitField, validators, TextField
 from wtforms.fields.html5 import EmailField
 
 class RegistrationForm(Form):
@@ -14,3 +14,14 @@ class RegistrationForm(Form):
                              message='Passwords must match')])
 
     submit = SubmitField('submit', validators=[validators.DataRequired()])
+
+
+class LoginForm(Form):
+    loginemail = EmailField('email', validators=[validators.DataRequired(), validators.Email()])
+    loginpassword = PasswordField('password', validators=[validators.DataRequired(message="Passwword required")])
+    submit = SubmitField('submit', validators=[validators.DataRequired()])
+
+
+class CreateTableForm(Form):
+    tablenumber = TextField('tablenumber', validators=[validators.DataRequired()])
+    submit = SubmitField('createtablesubmit', validators=[validators.DataRequired()])
