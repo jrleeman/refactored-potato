@@ -7,6 +7,7 @@ from mockdbhelper import MockDBHelper as DBHelper
 from user import User
 from passwordhelper import PasswordHelper
 from bitlyhelper import BitlyHelper
+from forms import RegistrationForm
 
 DB = DBHelper()
 PH = PasswordHelper()
@@ -19,7 +20,8 @@ login_manager = LoginManager(app)
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    registrationform = RegistrationForm()
+    return render_template('home.html', registrationform=registrationform)
 
 
 @app.route('/login', methods=['POST'])
