@@ -56,7 +56,6 @@ def register():
     hashed = PH.get_hash(pw1 + salt)
     DB.add_user(email, salt, hashed)
     print("Sucessful")
-    DB.print_users()
     return redirect(url_for('home'))
 
 
@@ -70,7 +69,12 @@ def load_user(user_id):
 @app.route('/account')
 @login_required
 def account():
-    return "You are logged in"
+    return render_template("account.html")
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
