@@ -1,7 +1,9 @@
 MOCK_USERS = [{'email':'test@example.com',
-               'salt': '8Fb23mMNHD5Zb8pr2qWA3PE9bH0=',
-               'hashed': '102ee513873376ddab29e8e6bc0abb2768ca965f13ad3e953b69a500c2e3ec85eeddf4a5d6b5577e48eca3c7b59f1442c681947e952208ee1ea014122348c45e'}
+               'salt': 'E0XDvm/7wWwMMrU707ybm2SW0Y0=',
+               'hashed': '58a76a944906787e13a2db88aa86f95b4b4ffb5aad95ea3a938dc0447384b46bf78a1cea5f37001f4a277420cb3c140526b501864a01512268154fcf81375b68'}
                ]
+
+MOCK_TABLES = [{"_id": "1", "number": 1, "owner": "test@example.com", "url": "mockurl"}]
 
 class MockDBHelper:
 
@@ -13,6 +15,30 @@ class MockDBHelper:
 
 
     def add_user(self, email, salt, hashed):
+        print(email, salt, hashed)
         MOCK_USERS.append({'email': email,
                            'salt': salt,
                            'hashed': hashed})
+
+
+    def add_table(self, number, owner):
+        MOCK_TABLES.append({"_id":number, "number":number, "owner":owner})
+        return number
+
+
+    def update_table(self, _id, url):
+        for table in MOCK_TABLES:
+            if table.get("_id") == _id:
+                table["url"] = url
+                break
+
+
+    def get_tables(self, owner_id):
+        return MOCK_TABLES
+
+
+    def delete_table(self, table_id):
+        for i, table in enumerate(MOCK_TABLES):
+            if table.get('_id') == table_id:
+                del MOCK_TABLES[i]
+                break

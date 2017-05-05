@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request
-from flask_login import LoginManager, login_required, login_user, logout_user
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 
+import config
 from mockdbhelper import MockDBHelper as DBHelper
 from user import User
 from passwordhelper import PasswordHelper
@@ -66,10 +67,29 @@ def load_user(user_id):
         return User(user_id)
 
 
+@app.route('/account/createtable', methods=['POST'])
+@login_required
+def account_createtable():
+    tablename = request.form.get("tablenumber")
+    tableid = DB.add_table(tablename, current_user.get_id())
+    new_url = config.base_url + 'newrequest/' + tableid
+    DB.update_table(tableid, new_url)
+    return redirect(url_for('account'))
+
+
+@app.route('/account/deletetable')
+@login_required
+def account_deletetable():
+    tableid = request.args.get("tableid")
+    DB.delete_table(tableid)
+    return redirect(url_for('account'))
+
+
 @app.route('/account')
 @login_required
 def account():
-    return render_template("account.html")
+    tables = DB.get_tables(current_user.get_id())
+    return render_template("account.html", tables=tables)
 
 @app.route('/dashboard')
 @login_required
